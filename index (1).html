@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alan Daniel | Frontend Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --accent: #6EE7B7;
+      --accent2: #818CF8;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 6vw;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 6vw;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(110,231,183,0.08) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      pointer-events: none;
+    }
+    .hero-glow2 {
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(129,140,248,0.06) 0%, transparent 70%);
+      bottom: 50px; left: -50px;
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; max-width: 800px; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(110,231,183,0.08);
+      border: 1px solid rgba(110,231,183,0.2);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.4rem 0.9rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.2s;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.4s;
+    }
+
+    .hero-name span {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-role {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.55s;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.7s;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.85s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #0a0a0f;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: var(--font-display);
+      letter-spacing: 0.01em;
+    }
+    .btn-primary:hover {
+      background: #a7f3d0;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(110,231,183,0.3);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--text);
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SCROLL INDICATOR */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.2s;
+    }
+    .scroll-indicator span {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollAnim 1.5s ease infinite;
+    }
+    @keyframes scrollAnim {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* SECTIONS */
+    section { padding: 6rem 6vw; }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .section-divider {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      border-radius: 2px;
+      margin-bottom: 3rem;
+    }
+
+    /* SOBRE MÍ */
+    #sobre-mi { background: var(--surface); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-text p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.9;
+      margin-bottom: 1rem;
+      font-weight: 300;
+    }
+
+    .about-text p strong { color: var(--text); font-weight: 500; }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* SKILLS */
+    #skills { background: var(--bg); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .skill-category {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .skill-category:hover {
+      border-color: var(--accent2);
+      transform: translateY(-4px);
+    }
+
+    .skill-cat-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1.25rem;
+    }
+
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+    .skill-tag {
+      background: rgba(129,140,248,0.08);
+      border: 1px solid rgba(129,140,248,0.15);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 400;
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .skill-tag:hover {
+      background: rgba(129,140,248,0.18);
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    /* PROYECTOS */
+    #proyectos { background: var(--surface); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+    .project-card:hover::before { transform: scaleX(1); }
+    .project-card:hover { border-color: rgba(110,231,183,0.3); transform: translateY(-6px); }
+
+    .project-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .project-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+      font-weight: 300;
+    }
+
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+
+    .project-tag {
+      background: rgba(110,231,183,0.08);
+      border: 1px solid rgba(110,231,183,0.15);
+      color: var(--accent);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .project-links { display: flex; gap: 1rem; }
+    .project-link {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.2s;
+      font-weight: 500;
+    }
+    .project-link:hover { color: var(--accent); }
+
+    /* COMING SOON CARD */
+    .project-card.coming-soon {
+      border-style: dashed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 220px;
+    }
+    .coming-soon-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      opacity: 0.4;
+    }
+    .coming-soon p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 300;
+    }
+
+    /* CONTACTO */
+    #contacto { background: var(--bg); }
+
+    .contact-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .contact-wrapper .section-label,
+    .contact-wrapper .section-title { text-align: center; }
+
+    .contact-wrapper .section-divider { margin: 0 auto 2rem; }
+
+    .contact-desc {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.9rem 1.5rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .contact-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem 6vw;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 300;
+    }
+
+    footer span { color: var(--accent); }
+
+    /* REVEAL ANIMATION */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 5vw; }
+      .nav-links { gap: 1.2rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-btns { flex-direction: column; }
+      .btn-primary, .btn-secondary { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">AD.</div>
+    <ul class="nav-links">
+      <li><a href="#sobre-mi">Sobre mí</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#proyectos">Proyectos</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="hero-content">
+      <div class="hero-tag">Disponible para trabajo remoto</div>
+      <h1 class="hero-name">Alan<br /><span>Daniel.</span></h1>
+      <p class="hero-role">Frontend Developer Jr.</p>
+      <p class="hero-desc">
+        Estudiante de Ingeniería en Software apasionado por crear interfaces web modernas y funcionales.
+        Me especializo en <strong>HTML, CSS, JavaScript y React</strong>.
+      </p>
+      <div class="hero-btns">
+        <a href="#proyectos" class="btn-primary">Ver proyectos →</a>
+        <a href="#contacto" class="btn-secondary">Contáctame</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- SOBRE MÍ -->
+  <section id="sobre-mi">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p class="section-label">Sobre mí</p>
+        <h2 class="section-title">Hola, soy Alan 👋</h2>
+        <div class="section-divider"></div>
+        <p>Soy estudiante de <strong>Ing. en Software y Minería de Datos</strong> en Villahermosa, Tabasco, actualmente en 4° semestre.</p>
+        <p>Mi interés por la programación nació en el verano de 2024 colaborando en proyectos reales de desarrollo web con mi primo, donde descubrí mi pasión por el <strong>frontend</strong>.</p>
+        <p>Me motiva crear experiencias digitales que sean bonitas, rápidas y fáciles de usar. Busco mi <strong>primera oportunidad remota</strong> donde pueda crecer y aportar valor desde el día uno.</p>
+      </div>
+      <div class="about-stats reveal">
+        <div class="stat-card">
+          <div class="stat-number">4°</div>
+          <div class="stat-label">Semestre de Ingeniería en Software</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">6+</div>
+          <div class="stat-label">Tecnologías dominadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Disponible para trabajo remoto</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Ganas de aprender y crecer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="reveal">
+      <p class="section-label">Habilidades</p>
+      <h2 class="section-title">Tecnologías</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-category">
+        <div class="skill-cat-title">⚡ Frontend</div>
+        <div class="skill-tags">
+          <span class="skill-tag">HTML5</span>
+          <span class="skill-tag">CSS3</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">React</span>
+          <span class="skill-tag">Vue</span>
+          <span class="skill-tag">Angular</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="skill-cat-title">🛠 Backend & Lenguajes</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Node.js</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">Java</span>
+          <span class="skill-tag">C++</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="skill-cat-title">🗄 Datos & Herramientas</div>
+        <div class="skill-tags">
+          <span class="skill-tag">SQL</span>
+          <span class="skill-tag">Git</span>
+          <span class="skill-tag">GitHub</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="skill-cat-title">🌐 Idiomas</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Español — Nativo</span>
+          <span class="skill-tag">Inglés — Básico/Intermedio</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROYECTOS -->
+  <section id="proyectos">
+    <div class="reveal">
+      <p class="section-label">Portafolio</p>
+      <h2 class="section-title">Proyectos</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <div class="project-icon">🌐</div>
+        <h3 class="project-title">Portafolio Personal</h3>
+        <p class="project-desc">
+          Sitio web personal donde muestro mis habilidades, proyectos y formas de contacto.
+          Diseño responsivo y animaciones CSS.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">HTML5</span>
+          <span class="project-tag">CSS3</span>
+          <span class="project-tag">JavaScript</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/AlanDaniel1" class="project-link" target="_blank">⬡ GitHub</a>
+          <a href="#" class="project-link">↗ Demo</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-icon">💼</div>
+        <h3 class="project-title">Proyecto Frontend — Colaboración</h3>
+        <p class="project-desc">
+          Apoyo en desarrollo de interfaces web en un entorno de trabajo real.
+          Construcción de componentes y páginas usando HTML5 y CSS.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">HTML5</span>
+          <span class="project-tag">CSS</span>
+          <span class="project-tag">C++</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/AlanDaniel1" class="project-link" target="_blank">⬡ GitHub</a>
+        </div>
+      </div>
+
+      <div class="project-card coming-soon reveal">
+        <div class="coming-soon-icon">🚀</div>
+        <h3 class="project-title">Próximo proyecto</h3>
+        <p>En construcción. ¡Vuelve pronto!</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto">
+    <div class="contact-wrapper reveal">
+      <p class="section-label">Contacto</p>
+      <h2 class="section-title">Hablemos 💬</h2>
+      <div class="section-divider"></div>
+      <p class="contact-desc">
+        Estoy buscando mi primera oportunidad como desarrollador frontend remoto.
+        Si tienes un proyecto o una vacante, escríbeme.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:As2482112@gmail.com" class="contact-link">
+          ✉️ As2482112@gmail.com
+        </a>
+        <a href="https://www.linkedin.com/in/alan-sanchez-534997337" target="_blank" class="contact-link">
+          🔗 LinkedIn
+        </a>
+        <a href="https://github.com/AlanDaniel1" target="_blank" class="contact-link">
+          ⬡ GitHub
+        </a>
+      </div>
+      <a href="mailto:As2482112@gmail.com" class="btn-primary" style="display:inline-flex;">
+        Enviar mensaje →
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Diseñado y desarrollado por <span>Alan Daniel Sánchez</span> · 2025</p>
+  </footer>
+
+  <script>
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Nav active link
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 200) current = s.getAttribute('id');
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--accent)' : '';
+      });
+    });
+  </script>
+
+</body>
+</html>
